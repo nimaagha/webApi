@@ -45,11 +45,11 @@ namespace MyWebApi.Models.Services
                 Text = toDo.todo.Text,
                 IsRemoved = false
             };
-            foreach (var item in toDo.todo.Categories)
+            /*foreach (var item in toDo.todo.Categories)
             {
                 var category = _context.Categories.SingleOrDefault(c => c.Id == toDo.todo.categoryId);
                 newToDo.Categories.Add(category);
-            }
+            }*/
             _context.ToDos.Add(newToDo);
             _context.SaveChanges();
             return new AddToDoDto
@@ -64,9 +64,12 @@ namespace MyWebApi.Models.Services
                 categories = toDo.categories
             };
         }
-        public void Delete(int Id)
+        public void Delete(long Id)
         {
-            _context.ToDos.Remove(new ToDo { Id = Id });
+            //_context.ToDos.Remove(new ToDo { Id = Id });
+            var todo = _context.ToDos.Find(Id);
+            todo.IsRemoved = true;
+
             _context.SaveChanges();
         }
 

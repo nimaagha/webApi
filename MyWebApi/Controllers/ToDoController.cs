@@ -47,20 +47,35 @@ namespace MyWebApi.Controllers
 
         // POST api/<ToDoController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] ItemDto item)
         {
+            var result = toDoRepository.Add(new AddToDoDto()
+            {
+                todo = new ToDoDto()
+                {
+                    Text = item.Text,
+                }
+            });
+
+            string url = Url.Action(nameof(Get),"ToDo", new { Id = result.todo.Id }, Request.Scheme);
+            return Created(url, true);
+
         }
 
         // PUT api/<ToDoController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        public IActionResult Put([FromBody] EditToDoDto editToDo)
         {
+            var result = toDoRepository.Edit(editToDo);
+            return Ok(result);
         }
 
         // DELETE api/<ToDoController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            toDoRepository.Delete(id);
+            return Ok();
         }
     }
 }

@@ -6,6 +6,6 @@ namespace MyWebApi.Models.Services
     public class AddToDoDto
     {
         public ToDoDto todo { get; set; }
-        public List<Category> categories { get; set; }
+        public List<int> categories { get; set; } = new List<int>();
     }
 }
