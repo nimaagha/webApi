@@ -35,7 +35,7 @@ namespace MyWebApi
             string connectionString = "Data Source=.;Initial Catalog=MyWebApi;Integrated Security=true;MultipleActiveResultSets=true";
             services.AddEntityFrameworkSqlServer().AddDbContext<DatabaseContext>(option => option.UseSqlServer(connectionString));
             services.AddScoped<ToDoRepository,ToDoRepository>();
-
+            services.AddScoped<CategoryRepository, CategoryRepository>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MyWebApi", Version = "v1" });
