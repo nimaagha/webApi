@@ -26,7 +26,28 @@ namespace MyWebApi.Controllers
             {
                 Id = p.Id,
                 Text = p.Text,
-                InsertTime = p.InsertTime
+                InsertTime = p.InsertTime,
+                Links = new List<Links>()
+                {
+                    new Links
+                    {
+                        Href = Url.Action(nameof(Get),"ToDo",new {p.Id},Request.Scheme),
+                        Rel = "Self",
+                        Method = "Get"
+                    },
+                    new Links
+                    {
+                        Href = Url.Action(nameof(Delete),"ToDo",new {p.Id},Request.Scheme),
+                        Rel = "Delete",
+                        Method = "Delete"
+                    },
+                    new Links
+                    {
+                        Href = Url.Action(nameof(Put),"ToDo",Request.Scheme),
+                        Rel = "Update",
+                        Method = "Put"
+                    }
+                }
             }).ToList();
             return Ok(todoList);
         }
