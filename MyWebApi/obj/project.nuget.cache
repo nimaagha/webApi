@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "EYsFpk42nE9gSLfwT3yFO+Jl0qR00XVMgL7mctPwLp0NGhy+XzlL8W8f/RL6q5RK8UqQeyddd5ZNeXl48CKPZA==",
+  "dgSpecHash": "2Alh+CrgyniLKoaoWbmREGAfCnv5FPZOhTUXpz78rnJw8EA1wS4e4JpLF1uSZMMXGfN+H/PqI8lD4gg/o+M69w==",
   "success": true,
   "projectFilePath": "C:\\Users\\Nima\\source\\repos\\MyWebApi\\MyWebApi\\MyWebApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Nima\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
+    "C:\\Users\\Nima\\.nuget\\packages\\microsoft.aspnetcore.mvc.versioning\\5.1.0\\microsoft.aspnetcore.mvc.versioning.5.1.0.nupkg.sha512",
     "C:\\Users\\Nima\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\Nima\\.nuget\\packages\\microsoft.data.sqlclient\\2.0.1\\microsoft.data.sqlclient.2.0.1.nupkg.sha512",
     "C:\\Users\\Nima\\.nuget\\packages\\microsoft.data.sqlclient.sni.runtime\\2.0.1\\microsoft.data.sqlclient.sni.runtime.2.0.1.nupkg.sha512",
