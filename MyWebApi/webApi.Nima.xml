@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MyWebApi</name>
+    </assembly>
+    <members>
+        <member name="M:MyWebApi.Controllers.CategoriesController.Get">
+            <summary>
+            Get List of Categories
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MyWebApi.Controllers.CategoriesController.Get(System.Int64)">
+            <summary>
+            Get Category with id
+            </summary>
+            <param name="id">identification</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

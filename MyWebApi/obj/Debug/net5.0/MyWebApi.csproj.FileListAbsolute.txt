@@ -64,3 +64,4 @@ C:\Users\Nima\source\repos\MyWebApi\MyWebApi\obj\Debug\net5.0\MyWebApi.pdb
 C:\Users\Nima\source\repos\MyWebApi\MyWebApi\obj\Debug\net5.0\MyWebApi.genruntimeconfig.cache
 C:\Users\Nima\source\repos\MyWebApi\MyWebApi\obj\Debug\net5.0\ref\MyWebApi.dll
 C:\Users\Nima\source\repos\MyWebApi\MyWebApi\bin\Debug\net5.0\Microsoft.AspNetCore.Mvc.Versioning.dll
+C:\Users\Nima\source\repos\MyWebApi\MyWebApi\bin\Debug\net5.0\webApi.Nima.xml

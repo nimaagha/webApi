@@ -13,12 +13,21 @@ namespace MyWebApi.Controllers
         {
             _categoryRepository = categoryRepository;
         }
+        /// <summary>
+        /// Get List of Categories
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult Get()
         {
             return Ok(_categoryRepository.GetAll());
         }
 
+        /// <summary>
+        /// Get Category with id
+        /// </summary>
+        /// <param name="id">identification</param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public IActionResult Get(long id)
         {

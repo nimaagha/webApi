@@ -15,6 +15,9 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MyWebApi.Models.Context;
 using MyWebApi.Models.Services;
+using System.IO;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 namespace MyWebApi
 {
@@ -44,7 +47,17 @@ namespace MyWebApi
             });
             services.AddSwaggerGen(c =>
             {
+                c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "webApi.Nima.xml"), true);
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MyWebApi", Version = "v1" });
+                c.SwaggerDoc("v2", new OpenApiInfo { Title = "MyWebApi", Version = "v2" });
+                c.DocInclusionPredicate((doc, apiDescription) =>
+                {
+                    if (!apiDescription.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
+                    var version = methodInfo.DeclaringType
+                        .GetCustomAttributes<ApiVersionAttribute>(true)
+                        .SelectMany(attr => attr.Versions);
+                    return version.Any(v => $"v{v.ToString()}" == doc);
+                });
             });
         }
 
@@ -55,7 +68,11 @@ namespace MyWebApi
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyWebApi v1"));
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "MyWebApi v1");
+                    options.SwaggerEndpoint("/swagger/v2/swagger.json", "MyWebApi v2");
+                });
             }
 
             app.UseHttpsRedirection();
