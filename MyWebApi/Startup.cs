@@ -18,6 +18,9 @@ using MyWebApi.Models.Services;
 using System.IO;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace MyWebApi
 {
@@ -35,6 +38,54 @@ namespace MyWebApi
         {
 
             services.AddControllers();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(configureOptions =>
+                {
+                    configureOptions.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                    {
+                        ValidIssuer = Configuration["JwtConfig:issuer"],
+                        ValidAudience = Configuration["JwtConfig:audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtConfig:key"])),
+                        ValidateIssuerSigningKey = true,
+                        ValidateLifetime = true
+                    };
+                    configureOptions.SaveToken = true;
+                    configureOptions.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            //log for failure
+                            return Task.CompletedTask;
+                        },
+                        OnTokenValidated = context =>
+                        {
+                            //log for after validation
+                            return Task.CompletedTask;
+                        },
+                        OnChallenge = context =>
+                        {
+                            //log
+                            return Task.CompletedTask;
+                        },
+                        OnMessageReceived = context =>
+                        {
+                            //log
+                            return Task.CompletedTask;
+                        },
+                        OnForbidden = context =>
+                        {
+                            //log
+                            return Task.CompletedTask;
+                        },
+                    };
+                });
+
             string connectionString = "Data Source=.;Initial Catalog=MyWebApi;Integrated Security=true;MultipleActiveResultSets=true";
             services.AddEntityFrameworkSqlServer().AddDbContext<DatabaseContext>(option => option.UseSqlServer(connectionString));
             services.AddScoped<ToDoRepository,ToDoRepository>();
@@ -78,6 +129,8 @@ namespace MyWebApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
