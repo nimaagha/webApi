@@ -21,6 +21,8 @@ using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
+using MyWebApi.Models.Services.Validator;
 
 namespace MyWebApi
 {
@@ -38,6 +40,7 @@ namespace MyWebApi
         {
 
             services.AddControllers();
+            services.AddScoped<ITokenValidator, TokenValidate>();
 
             services.AddAuthentication(options =>
             {
@@ -66,7 +69,8 @@ namespace MyWebApi
                         OnTokenValidated = context =>
                         {
                             //log for after validation
-                            return Task.CompletedTask;
+                            var tokenValidatorService = context.HttpContext.RequestServices.GetRequiredService<ITokenValidator>();
+                            return tokenValidatorService.Execute(context);
                         },
                         OnChallenge = context =>
                         {
@@ -90,6 +94,8 @@ namespace MyWebApi
             services.AddEntityFrameworkSqlServer().AddDbContext<DatabaseContext>(option => option.UseSqlServer(connectionString));
             services.AddScoped<ToDoRepository,ToDoRepository>();
             services.AddScoped<CategoryRepository, CategoryRepository>();
+            services.AddScoped<UserRepository, UserRepository>();
+            services.AddScoped<UserTokenRepository, UserTokenRepository>();
             services.AddApiVersioning(options =>
             {
                 options.AssumeDefaultVersionWhenUnspecified = true;
