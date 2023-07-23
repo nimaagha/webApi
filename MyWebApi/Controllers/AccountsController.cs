@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using MyWebApi.Models.Dto;
 using MyWebApi.Models.Helpers;
 using MyWebApi.Models.Services;
 using System;
@@ -30,9 +31,28 @@ namespace MyWebApi.Controllers
         [HttpPost]
         public IActionResult Post(string Username, string Password)
         {
-            SecurityHelper securityHelper = new SecurityHelper();
-            if(userRepository.ValidateUser(Username, Password))
+            return Ok(CreateToken(Username, Password));
+        }
+
+        [HttpPost]
+        [Route("RefreshToken")]
+        public IActionResult RefreshToken(string RefreshToken)
+        {
+            var userToken = userTokenRepository.FindRefreshToken(RefreshToken);
+            if(userToken == null)
             {
+                return Unauthorized();
+            }
+            if(userToken.RefreshTokenExp < DateTime.Now)
+            {
+                return Unauthorized("Token Expired!");
+            }
+            return Ok(CreateToken(null, null));
+        }
+        private LoginResultDto CreateToken(string Username, string Password)
+        {
+            SecurityHelper securityHelper = new SecurityHelper();
+            
                 var user = userRepository.GetUser(Guid.Parse("{FB0DB9D6-170E-4023-8C21-2E9920F58AB3}"));
                 var claims = new List<Claim>
                 {
@@ -41,7 +61,7 @@ namespace MyWebApi.Controllers
                 };
                 string key = configuration["JwtConfig:Key"];
                 var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-                var credentials = new SigningCredentials(secretKey,SecurityAlgorithms.HmacSha256);
+                var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
                 var tokenExp = DateTime.Now.AddMinutes(int.Parse(configuration["JwtConfig:expires"]));
                 var token = new JwtSecurityToken(
                     issuer: configuration["JwtConfig:issuer"],
@@ -52,6 +72,7 @@ namespace MyWebApi.Controllers
                     signingCredentials: credentials
                     );
                 var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+                var refreshTokn = Guid.NewGuid();
 
                 userTokenRepository.SaveToken(new Models.Entities.UserToken()
                 {
@@ -59,13 +80,15 @@ namespace MyWebApi.Controllers
                     TokenExp = tokenExp,
                     TokenHash = securityHelper.Getsha256Hash(jwtToken),
                     User = user,
+                    RefreshToken = securityHelper.Getsha256Hash(refreshTokn.ToString()),
+                    RefreshTokenExp = DateTime.Now.AddDays(30),
                 });
-                return Ok(jwtToken);
-            }
-            else
+
+            return new LoginResultDto()
             {
-                return Unauthorized();
-            }
+                Token = jwtToken,
+                RefreshToken = refreshTokn.ToString(),
+            };
         }
     }
 }
