@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using MyWebApi.Models.Dto;
+using MyWebApi.Models.Entities;
 using MyWebApi.Models.Helpers;
 using MyWebApi.Models.Services;
 using System;
@@ -29,9 +30,23 @@ namespace MyWebApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(string Username, string Password)
+        public IActionResult Post(string PhoneNumber, string SmsCode)
         {
-            return Ok(CreateToken(Username, Password));
+            var loginResult = userRepository.Login(PhoneNumber,SmsCode);
+            if(loginResult.IsSuccess == false)
+            {
+                return Unauthorized(new LoginResultDto()
+                {
+                    IsSuccess = false,
+                    Message = loginResult.Message,
+                });
+            }
+            var token = CreateToken(loginResult.User);
+            return Ok(new LoginResultDto()
+            {
+                IsSuccess = true,
+                Data = token,
+            });
         }
 
         [HttpPost]
@@ -47,17 +62,28 @@ namespace MyWebApi.Controllers
             {
                 return Unauthorized("Token Expired!");
             }
-            return Ok(CreateToken(null, null));
+            var token = CreateToken(userToken.User);
+            userTokenRepository.DeleteToken(RefreshToken);
+            return Ok(token);
         }
-        private LoginResultDto CreateToken(string Username, string Password)
+
+        [HttpGet]
+        [Route("GetSmsCode")]
+        public IActionResult GetSmsCode(string PhoneNumber)
+        {
+           var smsCode = userRepository.GetCode(PhoneNumber);
+            //send code via sms
+            return Ok();
+        }
+        private LoginDataDto CreateToken(User user)
         {
             SecurityHelper securityHelper = new SecurityHelper();
             
-                var user = userRepository.GetUser(Guid.Parse("{FB0DB9D6-170E-4023-8C21-2E9920F58AB3}"));
+                //var user = userRepository.GetUser(Guid.Parse("{FB0DB9D6-170E-4023-8C21-2E9920F58AB3}"));
                 var claims = new List<Claim>
                 {
                     new Claim("UserId", user.Id.ToString()),
-                    new Claim("Name", user.Name),
+                    new Claim("Name", user?.Name??""),
                 };
                 string key = configuration["JwtConfig:Key"];
                 var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
@@ -84,7 +110,7 @@ namespace MyWebApi.Controllers
                     RefreshTokenExp = DateTime.Now.AddDays(30),
                 });
 
-            return new LoginResultDto()
+            return new LoginDataDto()
             {
                 Token = jwtToken,
                 RefreshToken = refreshTokn.ToString(),

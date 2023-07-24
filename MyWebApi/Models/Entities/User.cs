@@ -8,9 +8,19 @@ namespace MyWebApi.Models.Entities
         public Guid Id { get; set; }
         public string Name { get; set; }
         public bool IsActive { get; set; } = true;
+        public string PhoneNumber { get; set; }
         public ICollection<UserToken> UserTokens { get; set; }
     }
 
+    public class SmsCode
+    {
+        public int Id { get; set; }
+        public string PhoneNuber { get; set; }
+        public string Code { get; set; }
+        public bool Used { get; set; }
+        public int RequestCount { get; set; }
+        public DateTime InsertDate { get; set; }
+    }
     public class UserToken
     {
         public int Id { get; set; }

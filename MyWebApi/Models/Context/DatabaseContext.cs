@@ -14,6 +14,8 @@ namespace MyWebApi.Models.Context
         public DbSet<User> users { get; set; }
         public DbSet<UserToken> userTokens { get; set; }
 
+        public DbSet<SmsCode> smsCodes { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
