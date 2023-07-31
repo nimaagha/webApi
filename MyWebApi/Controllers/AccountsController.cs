@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -9,6 +10,7 @@ using MyWebApi.Models.Services;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
@@ -75,6 +77,17 @@ namespace MyWebApi.Controllers
             //send code via sms
             return Ok();
         }
+
+        [Authorize]
+        [HttpGet]
+        [Route("Logout")]
+        public IActionResult Logout()
+        {
+            var user = User.Claims.First(p => p.Type == "UserId").Value;
+            userRepository.Logout(Guid.Parse(user));
+            return Ok();
+        }
+
         private LoginDataDto CreateToken(User user)
         {
             SecurityHelper securityHelper = new SecurityHelper();

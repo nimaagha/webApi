@@ -2,6 +2,7 @@
 using MyWebApi.Models.Context;
 using MyWebApi.Models.Entities;
 using MyWebApi.Models.Helpers;
+using System;
 using System.Linq;
 
 namespace MyWebApi.Models.Services
@@ -36,6 +37,14 @@ namespace MyWebApi.Models.Services
                 context.userTokens.Remove(token);
                 context.SaveChanges();
             }
+        }
+
+        public bool CheckExistToken(string token)
+        {
+            SecurityHelper securityHelper = new SecurityHelper();
+            string tokenHash = securityHelper.Getsha256Hash(token);
+            var userToken = context.userTokens.Where(p => p.TokenHash == tokenHash).FirstOrDefault();
+            return userToken == null ? false : true;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -13,9 +14,13 @@ namespace MyWebApi.Models.Services.Validator
     public class TokenValidate : ITokenValidator
     {
         private readonly UserRepository userRepository;
-        public TokenValidate(UserRepository userRepository)
+        private UserTokenRepository userTokenRepository;
+        public TokenValidate(UserRepository userRepository, UserTokenRepository userTokenRepository)
         {
             this.userRepository = userRepository;
+            this.userTokenRepository = userTokenRepository;
+            this.userTokenRepository = userTokenRepository;
+
         }
         public async Task Execute(TokenValidatedContext context)
         {
@@ -35,6 +40,12 @@ namespace MyWebApi.Models.Services.Validator
             if(user.IsActive == false)
             {
                 context.Fail("User is not active!");
+                return;
+            }
+            if(!(context.SecurityToken is JwtSecurityToken Token)
+                || !userTokenRepository.CheckExistToken(Token.RawData))
+            {
+                context.Fail("Token is not exist!");
                 return;
             }
         }

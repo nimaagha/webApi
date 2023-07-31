@@ -100,6 +100,13 @@ namespace MyWebApi.Models.Services
             };
             return user;
         }
+
+        public void Logout(Guid userId)
+        {
+            var userToken = context.userTokens.Where(p => p.UserId == userId).ToList();
+            context.userTokens.RemoveRange(userToken);
+            context.SaveChanges();
+        }
     }
 
     public class LoginDto

@@ -115,6 +115,25 @@ namespace MyWebApi
                         .SelectMany(attr => attr.Versions);
                     return version.Any(v => $"v{v.ToString()}" == doc);
                 });
+                var security = new OpenApiSecurityScheme
+                {
+                    Name = "Jwt Auth",
+                    Description = "Insert your token here",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                c.AddSecurityDefinition(security.Reference.Id, security);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {security, new string[]{ } }
+                });
             });
         }
 
